@@ -13,20 +13,24 @@ def get_all_posts():
 
 
 @app.route('/register')
-def register():
+def register_get():
     pass
 
+
 @app.route('/login')
-def login():
+def login_get():
     pass
+
 
 @app.route('/logout')
 def logout():
     pass
 
+
 @app.route('/about')
 def about():
     pass
+
 
 @app.route('/contact')
 def contact():
