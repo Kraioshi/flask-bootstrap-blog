@@ -1,5 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap5
+
+from forms import RegistrationForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -12,9 +14,17 @@ def get_all_posts():
     return render_template('index.html')
 
 
-@app.route('/register')
+@app.route('/register', methods=["GET"])
 def register_get():
-    pass
+    form = RegistrationForm()
+    return render_template('register.html', form=form)
+
+
+@app.route('/register', methods=["POST"])
+def register_post():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        return redirect(url_for('register_get'))
 
 
 @app.route('/login')
