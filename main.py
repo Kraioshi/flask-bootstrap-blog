@@ -1,6 +1,8 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 from forms import RegistrationForm
 
@@ -38,16 +40,31 @@ def register_get():
 @app.route('/register', methods=["POST"])
 def register_post():
     form = RegistrationForm()
+
     if form.validate_on_submit():
+
+        result = db.session.execute(db.Select(User).where(User.email == form.email.data))
+        user = result.scalar()
+
+        if user:
+            flash('Email already registered')
+            # TODO: redirect to login page!
+            # TODO: redirect to login page!
+            return redirect(url_for('register_get'))
+
+        hashed_salted_password = generate_password_hash(password=form.email.data,
+                                                        method='pbkdf2:sha256',
+                                                        salt_length=8)
+
         new_user = User(
             name=form.name.data,
             email=form.email.data,
-            password=form.password.data
+            password=hashed_salted_password
         )
         db.session.add(new_user)
         db.session.commit()
 
-        return redirect(url_for('register_get'))
+        return redirect(url_for('get_all_posts'))
 
 
 @app.route('/login')
