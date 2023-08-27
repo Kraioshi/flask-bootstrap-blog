@@ -1,12 +1,27 @@
 from flask import Flask, render_template, redirect, url_for
 from flask_bootstrap import Bootstrap5
+from flask_sqlalchemy import SQLAlchemy
 
 from forms import RegistrationForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 Bootstrap5(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+db = SQLAlchemy()
+db.init_app(app)
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+
+
+with app.app_context():
+    db.create_all()
 
 
 @app.route('/')
@@ -24,6 +39,14 @@ def register_get():
 def register_post():
     form = RegistrationForm()
     if form.validate_on_submit():
+        new_user = User(
+            name=form.name.data,
+            email=form.email.data,
+            password=form.password.data
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
         return redirect(url_for('register_get'))
 
 
