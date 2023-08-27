@@ -3,8 +3,7 @@ from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-from forms import RegistrationForm
+from forms import RegistrationForm, LoginForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -67,9 +66,25 @@ def register_post():
         return redirect(url_for('get_all_posts'))
 
 
-@app.route('/login')
+@app.route('/login', methods=["GET"])
 def login_get():
-    pass
+    form = LoginForm()
+    return render_template('login.html', form=form)
+
+
+@app.route('/login', methods=["POST"])
+def login_post():
+    form = LoginForm()
+    email = form.email.data
+    password = form.password.data
+    user = db.session.execute(db.select(User).where(User.email == email)).scalar()
+
+    if user and check_password_hash(user.password, password):
+        return redirect(url_for('get_all_posts'))
+
+    elif not user or not check_password_hash(user.password, password):
+        flash("Incorrect email or password. Please try again")
+        return redirect(url_for('login_get'))
 
 
 @app.route('/logout')
