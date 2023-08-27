@@ -29,12 +29,12 @@ def logout():
 
 @app.route('/about')
 def about():
-    pass
+    return render_template('about.html')
 
 
 @app.route('/contact')
 def contact():
-    pass
+    return render_template('contact.html')
 
 
 if __name__ == "__main__":
