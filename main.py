@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import login_user, logout_user, LoginManager, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from forms import RegistrationForm, LoginForm
@@ -12,6 +13,13 @@ Bootstrap5(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 db = SQLAlchemy()
 db.init_app(app)
+
+login_manager = LoginManager(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 
 
 class User(db.Model):
@@ -80,6 +88,7 @@ def login_post():
     user = db.session.execute(db.select(User).where(User.email == email)).scalar()
 
     if user and check_password_hash(user.password, password):
+        login_user(user)
         return redirect(url_for('get_all_posts'))
 
     elif not user or not check_password_hash(user.password, password):
