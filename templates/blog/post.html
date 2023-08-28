@@ -1,14 +1,15 @@
 {% from "bootstrap5/form.html" import render_form %}
 {% extends "base.html" %}
+
 {% block header_bg %}
-<header
-  class="masthead"
-  style="background-image: url('../static/assets/img/post-bg.jpg')">
+<header class="masthead" style="background-image: url('{{post.img_url}}')">
+
 {% endblock %}
 
+
 {% block heading %}
-  <h1>Void Blog</h1>
-  <span class="subheading">The Memes Coalesce</span>
+  <h1>{{ post.title }}</h1>
+  <span class="subheading">{{ post.subtitle }}</span>
 {% endblock %}
 
 {% block content %}
