@@ -10853,6 +10853,10 @@ header.masthead .post-heading .meta a {
     color: #ee6f57;
     text-align: center;
 }
+.flash-confirm {
+    color: #ffc107;
+    text-align: center;
+}
 
 .card {
  color: inherit;
