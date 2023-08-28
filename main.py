@@ -13,7 +13,6 @@ from models import db, BlogPost, User, Comment
 from send_email import send_email
 
 today = date.today().strftime("%B %d, %Y")
-now = datetime.now().strftime("%H:%M")
 
 # TODO add profile pic
 
@@ -147,7 +146,7 @@ def show_post_post(post_id):
             text=comment_form.comment_text.data,
             author_id=current_user.id,
             post_id=requested_post.id,
-            time=f"{today} at {now}"
+            time=f"{today}"
         )
         db.session.add(new_comment)
         db.session.commit()
