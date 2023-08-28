@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta
@@ -12,6 +12,7 @@
     {% block styles %}
     <!-- Bootstrap-Flask CSS  -->
     {{ bootstrap.load_css() }}
+
     <link
       rel="icon"
       type="image/x-icon"
@@ -68,6 +69,7 @@
                 >Home</a
               >
             </li>
+            {% if not current_user.is_authenticated %}
               <li class="nav-item">
                 <a
                   class="nav-link px-lg-3 py-3 py-lg-4"
@@ -82,6 +84,7 @@
                   >Register</a
                 >
               </li>
+              {% else %}
               <li class="nav-item">
                 <a
                   class="nav-link px-lg-3 py-3 py-lg-4"
@@ -89,6 +92,7 @@
                   >Log Out</a
                 >
               </li>
+          {% endif %}
             <li class="nav-item">
               <a
                 class="nav-link px-lg-3 py-3 py-lg-4"
@@ -110,25 +114,26 @@
 <!-- Navbar -->
 {% endblock %}
 
-{% block header %}
   <!-- Page Header-->
+{% block header_bg %}
 <header
   class="masthead"
-  style="background-image: url('../static/assets/img/home-bg.jpg')"
->
+  style="background-image: url('../static/assets/img/void-bg.png')">
+{% endblock %}
+
   <div class="container position-relative px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5 justify-content-center">
       <div class="col-md-10 col-lg-8 col-xl-7">
         <div class="site-heading">
+        {% block heading %}
           <h1>Void Blog</h1>
           <span class="subheading">The Memes Coalesce.</span>
+        {% endblock %}
         </div>
       </div>
     </div>
   </div>
 </header>
-
-{% endblock %}
 
 {% block content %}
 {% endblock %}

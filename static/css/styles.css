@@ -10853,3 +10853,15 @@ header.masthead .post-heading .meta a {
     color: #ee6f57;
     text-align: center;
 }
+
+.card {
+ color: inherit;
+ cursor: pointer;
+ width: calc(33% - 3rem);
+ min-width: calc(33% - 3rem);
+ height: 400px;
+ min-height: 400px;
+ perspective: 1000px;
+ margin: 1rem auto;
+ position: relative;
+ }
