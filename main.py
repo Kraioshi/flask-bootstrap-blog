@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from flask import Flask, abort, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
@@ -11,6 +11,9 @@ import os
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from models import db, BlogPost, User, Comment
 from send_email import send_email
+
+today = date.today().strftime("%B %d, %Y")
+now = datetime.now().strftime("%H:%M")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("FLASK_SECRET")
@@ -122,23 +125,31 @@ def logout():
     return redirect(url_for('get_all_posts'))
 
 
-@app.route("/post/<int:post_id>", methods=["GET", "POST"])
-def show_post(post_id):
-    requested_post = db.get_or_404(BlogPost, post_id)
+@app.route("/post/<int:post_id>", methods=["GET"])
+def show_post_get(post_id):
     comment_form = CommentForm()
+    requested_post = db.get_or_404(BlogPost, post_id)
+    return render_template("blog/post.html", post=requested_post, form=comment_form, current_user=current_user)
+
+
+@app.route("/post/<int:post_id>", methods=["POST"])
+def show_post_post(post_id):
+    comment_form = CommentForm()
+    requested_post = db.get_or_404(BlogPost, post_id)
     if comment_form.validate_on_submit():
         if not current_user.is_authenticated:
-            flash("You need to login or register to comment.")
-            return redirect(url_for("login"))
-
+            flash("You need to be logged in to be able to comment")
+            return redirect(url_for('login_get'))
         new_comment = Comment(
             text=comment_form.comment_text.data,
-            comment_author=current_user,
-            parent_post=requested_post
+            author_id=current_user.id,
+            post_id=requested_post.id,
+            time=f"{today} at {now}"
         )
         db.session.add(new_comment)
         db.session.commit()
-    return render_template("blog/post.html", post=requested_post, current_user=current_user, form=comment_form)
+        comment_form.comment_text.data = ""
+        return redirect(url_for('show_post_get', post_id=post_id))
 
 
 @app.route("/new-post", methods=["GET", "POST"])
@@ -177,8 +188,8 @@ def edit_post(post_id):
         post.author = current_user
         post.body = edit_form.body.data
         db.session.commit()
-        return redirect(url_for("show_post", post_id=post.id))
-    return render_template("make-post.html", form=edit_form, is_edit=True, current_user=current_user)
+        return redirect(url_for("show_post_get", post_id=post.id))
+    return render_template("blog/make-post.html", form=edit_form, is_edit=True, current_user=current_user)
 
 
 @app.route("/delete/<int:post_id>")
