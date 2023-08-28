@@ -12,8 +12,6 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 from models import db, BlogPost, User, Comment
 from send_email import send_email
 
-
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("FLASK_SECRET")
 ckeditor = CKEditor(app)
@@ -218,6 +216,7 @@ def get_older_posts():
     result = db.session.execute(db.select(BlogPost))
     posts = result.scalars().all()
     return render_template('blog/older.html', all_posts=posts)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
