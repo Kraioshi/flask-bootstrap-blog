@@ -15,6 +15,8 @@ from send_email import send_email
 today = date.today().strftime("%B %d, %Y")
 now = datetime.now().strftime("%H:%M")
 
+# TODO add profile pic
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("FLASK_SECRET")
 ckeditor = CKEditor(app)
@@ -29,7 +31,8 @@ def load_user(user_id):
     return db.get_or_404(User, user_id)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', "sqlite:///posts.db")
+
 db.init_app(app)
 
 with app.app_context():
@@ -230,4 +233,4 @@ def get_older_posts():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=False)
